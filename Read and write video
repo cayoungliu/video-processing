@@ -1,0 +1,38 @@
+#include<iostream>
+#include<opencv2/opencv.hpp>
+
+using namespace cv;
+using namespace std;
+
+int main() {
+	VideoCapture capture;
+	Mat frame,gray, binary;
+	frame= capture.open(0);//读摄像头，(0)表示第一个摄像头，即笔记本自带摄像头
+  //frame = capture.open("F:/opencv learning/v01.avi");//读视频文件
+	if (!capture.isOpened()) {
+		cout << "could not load video..." << endl;
+		return -1;
+	}
+	double fps = capture.get(CV_CAP_PROP_FPS);//获取视频帧数,frame:帧
+	Size size = Size(capture.get(CV_CAP_PROP_FRAME_WIDTH),capture.get(CV_CAP_PROP_FRAME_HEIGHT));//获取帧的宽度和高度
+	cout << "FPS is:" << fps << endl;
+	
+	//VideoWriter writer("F:/opencv learning/v03.avi",CV_FOURCC('D','I','V','X'),15.0,size,true);//写入读取的视频文件，true表示彩色
+	namedWindow("video_demo",CV_WINDOW_AUTOSIZE);
+	while (capture.read(frame)) {//一帧一帧的加载
+		//cvtColor(frame,gray,COLOR_GRAY2BGR);//二值化处理
+		//inRange(frame, Scalar(0, 127, 0), Scalar(127, 255, 127), gray);
+		//threshold(gray, binary, 0, 255, THRESH_BINARY | THRESH_OTSU);
+		//bitwise_not(frame, frame);//负片
+		flip(frame,frame,1);//左右翻转视频，很棒
+	    imshow("video_demo",frame);	
+		//writer.write(frame);//写入视频文件必须要写这句！
+	    char c = waitKey(10);//（5帧/秒（waitKey(200)））即可满足人眼的反应程度,所以设置waitKey()应小于200
+	 if (c == 27) {
+		break;//27为ESC的ASCII码,按ESC键程序停止循环
+	 }
+	}
+	//waitKey();//保持窗口不必要
+	capture.release();//释放内存！！
+	return 0;
+}
