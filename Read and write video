@@ -26,7 +26,7 @@ int main() {
 		//bitwise_not(frame, frame);//负片
 		flip(frame,frame,1);//左右翻转视频，很棒
 	    imshow("video_demo",frame);	
-		writer.write(frame);//写入视频文件必须写这句！
+		writer.write(frame);//写入视频文件必须写这句！目前我只会写入（保存）彩色视频和负片视频，无法写入黑白视频
 	    char c = waitKey(10);//（5帧/秒（waitKey(200)））即可满足人眼的反应程度,所以设置waitKey()应小于200
 	 if (c == 27) {
 		break;//27为ESC的ASCII码,按ESC键程序停止循环
