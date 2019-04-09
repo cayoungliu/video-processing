@@ -1,6 +1,6 @@
-fourcc为 四个字符用来表示压缩帧的codec——就是一种压缩格式（Video compression format）
+//fourcc为 四个字符用来表示压缩帧的codec——就是一种压缩格式（Video compression format）
 
-例如：
+//for example：
 
 CV_FOURCC('P','I','M','1') = MPEG-1 codec
 
