@@ -20,7 +20,7 @@ int main() {
 	VideoWriter writer（“F：/ opencv learning / v03.avi”，CV_FOURCC（'D'，'I'，'V'，'X'），15.0，size，true）; //写入视频文件的位置/格式/帧数/大小/彩色，true表示彩色
 	namedWindow（ “video_demo”，CV_WINDOW_AUTOSIZE）
 	while (capture.read(frame)) {//一帧一帧的加载
-		//cvtColor(frame,gray,COLOR_GRAY2BGR);//二值化处理
+		//cvtColor(frame,gray,CV_GRAY2BGR);//二值化处理，//注意！！！是CV——BGR2GRAY,不是COLOR_BGR2GRAY！！！！
 		//inRange(frame, Scalar(0, 127, 0), Scalar(127, 255, 127), gray);
 		//threshold(gray, binary, 0, 255, THRESH_BINARY | THRESH_OTSU);
 		//bitwise_not(frame, frame);//负片
