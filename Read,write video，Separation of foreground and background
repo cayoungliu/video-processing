@@ -11,26 +11,43 @@ int main() {
       //frame = capture.open("F:/opencv learning/v01.avi");//读视频文件
 	if (!capture.isOpened()) {//如果无法读入视频，则...
 		cout << "could not load video..." << endl;
+		//printf("could not load video...\n");
 		return -1;
 	}
 	double fps = capture.get(CV_CAP_PROP_FPS);//获取视频帧数,frame:帧
-	Size size = Size(capture.get(CV_CAP_PROP_FRAME_WIDTH),capture.get(CV_CAP_PROP_FRAME_HEIGHT));//获取帧的宽度和高度
+	//Size size = Size(capture.get(CV_CAP_PROP_FRAME_WIDTH),capture.get(CV_CAP_PROP_FRAME_HEIGHT));//获取帧的宽度和高度
 	cout << "FPS is:" << fps << endl;//输出当前帧数
-	
 	VideoWriter writer（“F：/ opencv learning / v03.avi”，CV_FOURCC（'D'，'I'，'V'，'X'），15.0，size，true）; //写入视频文件的位置/格式/帧数/大小/彩色，true表示彩色
-	namedWindow（ “video_demo”，CV_WINDOW_AUTOSIZE）
+	namedWindow("input video",CV_WINDOW_AUTOSIZE);
+	namedWindow("MOG2",CV_WINDOW_AUTOSIZE);
+	namedWindow("KNN MODEL",CV_WINDOW_AUTOSIZE);
+	Mat kernel = getStructuringElement(MORPH_RECT,Size(3,3),Point(-1,-1));
+	Ptr<BackgroundSubtractor> pMOG2 = createBackgroundSubtractorMOG2();//注意末尾的括号不能丢！！
+	Ptr<BackgroundSubtractor> pKNN = createBackgroundSubtractorKNN();
 	while (capture.read(frame)) {//一帧一帧的加载
+	        resize(frame,frame,Size(frame.cols/1.5,frame.rows/1.5));//将窗口缩小1.5倍
 		//cvtColor(frame,gray,CV_GRAY2BGR);//二值化处理，//注意！！！是CV——BGR2GRAY,不是COLOR_BGR2GRAY！！！！
 		//inRange(frame, Scalar(0, 127, 0), Scalar(127, 255, 127), gray);
 		//threshold(gray, binary, 0, 255, THRESH_BINARY | THRESH_OTSU);
 		//bitwise_not(frame, frame);//负片
 		flip(frame,frame,1);//左右翻转视频，很棒
-	    imshow("video_demo",frame);	
-		writer.write(frame);//写入视频文件必须写这句！目前我只会写入（保存）彩色视频和负片视频，无法写入黑白视频
-	    char c = waitKey(10);//（5帧/秒（waitKey(200)））即可满足人眼的反应程度,所以设置waitKey()应小于200
-	 if (c == 27) {
+		
+		imshow("input video",frame);
+		//writer.write(frame);
+		//MOG22和KNN两种分离前景背景的函数
+		pMOG2->apply(frame,bsmaskMOG2);
+		morphologyEx(bsmaskMOG2,bsmaskMOG2,MORPH_OPEN,kernel,Point(-1,-1));
+		imshow("MOG2",bsmaskMOG2);
+		
+		pKNN->apply(frame,bsmaskKNN);
+		morphologyEx(bsmaskKNN,bsmaskKNN,MORPH_OPEN,kernel,Point(-1,-1));
+		imshow("KNN MODEL",bsmaskKNN);
+		
+		//writer.write(frame);//写入视频文件必须写这句！目前我只会写入（保存）彩色视频和负片视频，无法写入黑白视频
+	        char c = waitKey(10);//（5帧/秒（waitKey(200)））即可满足人眼的反应程度,所以设置waitKey()应小于200
+	   if (c == 27) {
 		break;//27为ESC的ASCII码,按ESC键程序停止循环
-	 }
+	      }
 	}
 	//waitKey();//保持窗口不必要
 	capture.release();//释放内存！！
